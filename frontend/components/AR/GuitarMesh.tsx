@@ -34,20 +34,38 @@ export default function GuitarMesh() {
 
     // Create procedural guitar geometry
     const { body, neck, frets, strings, stringGlows } = useMemo(() => {
-        // Guitar body (simplified shape)
+        // Guitar body (proper acoustic guitar figure-8 shape)
         const bodyShape = new THREE.Shape();
-        bodyShape.moveTo(0, -0.3);
-        bodyShape.bezierCurveTo(0.3, -0.3, 0.4, -0.1, 0.4, 0.15);
-        bodyShape.bezierCurveTo(0.4, 0.35, 0.25, 0.45, 0, 0.45);
-        bodyShape.bezierCurveTo(-0.25, 0.45, -0.4, 0.35, -0.4, 0.15);
-        bodyShape.bezierCurveTo(-0.4, -0.1, -0.3, -0.3, 0, -0.3);
+
+        // Start at bottom center
+        bodyShape.moveTo(0, -0.45);
+
+        // Lower bout (right side) - the larger bottom part
+        bodyShape.bezierCurveTo(0.35, -0.45, 0.45, -0.25, 0.45, -0.05);
+
+        // Waist (right side) - the narrow middle
+        bodyShape.bezierCurveTo(0.45, 0.05, 0.25, 0.12, 0.22, 0.18);
+
+        // Upper bout (right side) - the smaller top part
+        bodyShape.bezierCurveTo(0.28, 0.28, 0.32, 0.38, 0.25, 0.45);
+        bodyShape.bezierCurveTo(0.18, 0.52, 0.08, 0.55, 0, 0.55);
+
+        // Upper bout (left side)
+        bodyShape.bezierCurveTo(-0.08, 0.55, -0.18, 0.52, -0.25, 0.45);
+        bodyShape.bezierCurveTo(-0.32, 0.38, -0.28, 0.28, -0.22, 0.18);
+
+        // Waist (left side)
+        bodyShape.bezierCurveTo(-0.25, 0.12, -0.45, 0.05, -0.45, -0.05);
+
+        // Lower bout (left side)
+        bodyShape.bezierCurveTo(-0.45, -0.25, -0.35, -0.45, 0, -0.45);
 
         const bodyGeometry = new THREE.ExtrudeGeometry(bodyShape, {
-            depth: 0.08,
+            depth: 0.1,
             bevelEnabled: true,
-            bevelThickness: 0.01,
-            bevelSize: 0.01,
-            bevelSegments: 3,
+            bevelThickness: 0.015,
+            bevelSize: 0.015,
+            bevelSegments: 5,
         });
 
         const bodyMaterial = new THREE.MeshStandardMaterial({
@@ -58,7 +76,7 @@ export default function GuitarMesh() {
 
         const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
         body.rotation.x = Math.PI / 2;
-        body.position.z = -0.04;
+        body.position.z = -0.05;
 
         // Neck
         const neckGeometry = new THREE.BoxGeometry(0.12, 0.8, 0.03);

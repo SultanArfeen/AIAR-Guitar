@@ -362,7 +362,6 @@ export default function DebugView() {
         <canvas
             ref={canvasRef}
             className="debug-canvas"
-            style={{ transform: 'scaleX(-1)' }}
         />
     );
 }

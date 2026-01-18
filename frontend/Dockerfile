@@ -2,35 +2,32 @@
 # AIAR Guitar Frontend - Dockerfile
 # ==============================================
 # Multi-stage build for Next.js application
+# Context: repository root (for pnpm workspace)
 
-# Stage 1: Dependencies
-FROM node:20-alpine AS deps
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@8 --activate
 
-# Copy package files
-COPY package.json pnpm-lock.yaml* ./
+# Copy package files from monorepo root
+COPY pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY frontend/package.json ./frontend/
 
-# Install dependencies
+# Install dependencies in frontend directory
+WORKDIR /app/frontend
 RUN pnpm install --frozen-lockfile || pnpm install
 
-# Stage 2: Builder
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-RUN corepack enable && corepack prepare pnpm@8 --activate
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Copy source code
+COPY frontend/ .
 
 # Build the application
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN pnpm run build
 
-# Stage 3: Runner
+# Stage 2: Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
 
@@ -41,9 +38,9 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Copy built files
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder /app/frontend/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/frontend/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/frontend/.next/static ./.next/static
 
 USER nextjs
 

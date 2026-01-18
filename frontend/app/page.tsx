@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { useStore } from '@/stores/useStore';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import IntroSequence from '@/components/UI/IntroSequence';
 import HUD from '@/components/UI/HUD';
 import ErrorBoundary from '@/components/UI/ErrorBoundary';
@@ -26,6 +27,9 @@ export default function Home() {
     const [showIntro, setShowIntro] = useState(true);
     const [isClient, setIsClient] = useState(false);
     const { debugMode, setDebugMode, wsConnected, error } = useStore();
+
+    // Initialize WebSocket connection
+    useWebSocket();
 
     // Check for debug mode in URL
     useEffect(() => {

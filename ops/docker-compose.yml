@@ -8,59 +8,9 @@
 #   docker-compose logs -f frontend   # View frontend logs
 #   docker-compose down               # Stop all services
 
-version: '3.8'
-
 services:
   # ==============================================
-  # Frontend - Next.js Application
-  # ==============================================
-  frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_WSS_URL=ws://localhost:8000/ws/inference
-      - NODE_ENV=development
-    depends_on:
-      - backend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - aiar-network
-
-  # ==============================================
-  # Backend - FastAPI WebSocket Server
-  # ==============================================
-  backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      - QDRANT_URL=http://qdrant:6333
-      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
-      - EMBEDDING_MODE=raw
-      - SCORE_THRESHOLD=0.85
-      - LOG_LEVEL=INFO
-    depends_on:
-      qdrant:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health')"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - aiar-network
-
-  # ==============================================
-  # Qdrant - Vector Database
+  # Qdrant - Vector Database (starts first)
   # ==============================================
   qdrant:
     image: qdrant/qdrant:latest
@@ -78,6 +28,77 @@ services:
       retries: 5
     networks:
       - aiar-network
+    restart: unless-stopped
+
+  # ==============================================
+  # Qdrant Seeder - Populates chord database
+  # ==============================================
+  qdrant-seeder:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    command: python scripts/seed_qdrant.py
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    networks:
+      - aiar-network
+    restart: "no"
+
+  # ==============================================
+  # Backend - FastAPI WebSocket Server
+  # ==============================================
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+      - EMBEDDING_MODE=raw
+      - SCORE_THRESHOLD=0.7
+      - LOG_LEVEL=INFO
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      qdrant-seeder:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - aiar-network
+    restart: unless-stopped
+
+  # ==============================================
+  # Frontend - Next.js Application
+  # ==============================================
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_WSS_URL=ws://localhost:8000/ws/inference
+      - NODE_ENV=production
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - aiar-network
+    restart: unless-stopped
 
 # ==============================================
 # Volumes
