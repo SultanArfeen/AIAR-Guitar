@@ -1,4 +1,6 @@
-# AIAR Guitar
+<img width="2752" height="1536" alt="AIARThumbnail" src="https://github.com/user-attachments/assets/72ccfb0e-8afe-497f-9e55-bc85f4f1a170" />
+
+# AIAR Guitar — An AI Augmented Reality Browser Based Guitar
 
 > Browser-based Augmented Reality Guitar with Real-Time Computer Vision & AI Chord Correction
 
