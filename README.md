@@ -1,4 +1,4 @@
-# 🎸 AIAR Guitar
+# AIAR Guitar
 
 > Browser-based Augmented Reality Guitar with Real-Time Computer Vision & AI Chord Correction
 
@@ -6,13 +6,13 @@
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.109-009688)](https://fastapi.tiangolo.com/)
 
-## ✨ Features
+## Features
 
-- **🖐️ Hand Tracking**: Real-time hand landmark detection using MediaPipe
-- **🎸 AR Guitar**: 3D guitar overlay that anchors to your body
-- **🎵 Audio Synthesis**: Low-latency Tone.js audio engine with strum detection
-- **🤖 AI Chord Correction**: Vector similarity search for accurate chord recognition
-- **⚡ Real-Time**: Sub-35ms frame-to-audio latency target
+- ** Hand Tracking**: Real-time hand landmark detection using MediaPipe
+- ** AR Guitar**: 3D guitar overlay that anchors to your body
+- ** Audio Synthesis**: Low-latency Tone.js audio engine with strum detection
+- ** AI Chord Correction**: Vector similarity search for accurate chord recognition
+- ** Real-Time**: Sub-35ms frame-to-audio latency target
 
 ## 🚀 Quick Start
 
@@ -52,7 +52,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 - **API Docs**: <http://localhost:8000/docs>
 - **Qdrant Dashboard**: <http://localhost:6333/dashboard>
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -77,7 +77,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 /
@@ -133,14 +133,14 @@ SCORE_THRESHOLD=0.85
 OPENAI_API_KEY=           # Optional, for future features
 ```
 
-## 📚 Documentation
+## Documentation
 
 - [Architecture Overview](./docs/ARCHITECTURE.md)
 - [API Schema](./docs/API_SCHEMA.md)
 - [Testing Guide](./docs/TESTING.md)
 - [Deployment Guide](./docs/DEPLOY.md)
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Frontend tests
@@ -155,7 +155,7 @@ pytest -v
 ./ops/smoke_test.sh
 ```
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -163,11 +163,11 @@ pytest -v
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - [MediaPipe](https://mediapipe.dev/) for hand tracking
 - [Three.js](https://threejs.org/) and [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
